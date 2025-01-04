@@ -1,0 +1,17 @@
+- Concept of `Activity` (e.g. play game, publish article, go hiking)
+  - name, icon, color, note, category
+  - `note` allows to attach a written note
+  - Anything meaningful completed in a certain day
+- Concept of `Category` (e.g. work, leisure, health)
+  - Attached to a `Activity`
+  - Track percentage of activities by `Category`
+- Each day you can check multiple `Activity` completed
+  - The same even more than once a day
+- A calendar shows each `Activity` checked for each day
+  - As dots in the map
+- Filter calendar for each or multiple `Activity`
+  - Show frequency by period (e.g. X times in the last N days)
+  - Show the last times (e.g. last time X days ago)
+- Trends (e.g. Increased exercise (`Category`) by 20% this month)
+- Streaks
+- Goals (?, e.g. 5/10 books read this year)
