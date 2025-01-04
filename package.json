@@ -8,18 +8,24 @@
     "dev": "vite --port=3001",
     "build": "vite build",
     "serve": "vite preview",
-    "start": "vite"
+    "start": "vite",
+    "generate": "pnpm drizzle-kit generate"
   },
   "devDependencies": {
+    "@tanstack/router-plugin": "^1.95.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@tanstack/router-plugin": "^1.95.0",
     "@vitejs/plugin-react": "^4.3.2",
+    "drizzle-kit": "^0.30.1",
     "vite": "^6.0.3"
   },
   "dependencies": {
+    "@electric-sql/pglite": "^0.2.15",
+    "@electric-sql/pglite-react": "^0.2.15",
     "@tanstack/react-router": "^1.95.0",
     "@tanstack/router-devtools": "^1.95.0",
+    "drizzle-orm": "^0.38.3",
+    "effect": "^3.12.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   }
