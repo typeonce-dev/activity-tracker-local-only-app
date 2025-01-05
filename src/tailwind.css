@@ -2,6 +2,7 @@
 @import "tailwindcss/preflight" layer(base);
 @import "tailwindcss/utilities" layer(utilities);
 
+/* https://github.com/tailwindlabs/tailwindcss/blob/next/packages/tailwindcss/theme.css */
 @theme {
   --color-magenta: #ed8796;
   --color-dawn: #f5a97f;
@@ -11,4 +12,15 @@
   --color-fuchsia: #c69ff5;
   --color-midnight: #24273a;
   --color-salt: #fff;
+
+  --spacing: 0.25rem;
+
+  --text-sm: 0.875rem;
+  --text-sm--line-height: calc(1.25 / 0.875);
+
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-bold: 700;
+
+  --radius-md: 0.375rem;
 }

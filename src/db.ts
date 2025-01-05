@@ -1,11 +1,12 @@
-import { date, integer, pgTable, varchar } from "drizzle-orm/pg-core";
+import { date, integer, pgEnum, pgTable, varchar } from "drizzle-orm/pg-core";
+import { Color } from "./lib/schema";
 
-const colorColumn = varchar(); // Enum?
+export const colorColumn = pgEnum("color", Color.literals);
 
 export const categoryTable = pgTable("category", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   name: varchar().notNull(),
-  color: colorColumn.notNull(),
+  color: colorColumn().notNull(),
 });
 
 export const activityTable = pgTable("activity", {

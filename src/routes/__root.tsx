@@ -1,6 +1,5 @@
 import { PGliteProvider } from "@electric-sql/pglite-react";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { Array, Effect } from "effect";
 import { systemTable } from "../db";
 import { PgliteDrizzleContext } from "../lib/hooks/use-pglite-drizzle";
@@ -51,16 +50,13 @@ export const Route = createRootRoute({
 function RootComponent() {
   const { client, orm } = Route.useLoaderData();
   return (
-    <html>
-      <head></head>
-      <body className="bg-midnight text-salt">
-        <PGliteProvider db={client}>
-          <PgliteDrizzleContext.Provider value={orm}>
-            <Outlet />
-            <TanStackRouterDevtools position="bottom-right" />
-          </PgliteDrizzleContext.Provider>
-        </PGliteProvider>
-      </body>
-    </html>
+    <div className="bg-midnight text-salt min-h-dvh">
+      <PGliteProvider db={client}>
+        <PgliteDrizzleContext.Provider value={orm}>
+          <Outlet />
+          {/* <TanStackRouterDevtools position="bottom-right" /> */}
+        </PgliteDrizzleContext.Provider>
+      </PGliteProvider>
+    </div>
   );
 }

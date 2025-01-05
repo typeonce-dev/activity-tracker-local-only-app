@@ -1,4 +1,6 @@
 import { Data, Effect, flow, Schema } from "effect";
+import { categoryTable } from "../../db";
+import { Color } from "../schema";
 import { Pglite } from "./pglite";
 
 class WriteApiError extends Data.TaggedError("WriteApiError")<{
@@ -22,6 +24,12 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
         Effect.flatMap(exec)
       );
 
-    return {};
+    return {
+      insertCategory: execute(
+        Schema.Struct({ name: Schema.NonEmptyString, color: Color }),
+        ({ name, color }) =>
+          query((_) => _.insert(categoryTable).values({ name, color }))
+      ),
+    };
   }),
 }) {}

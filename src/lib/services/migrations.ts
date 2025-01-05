@@ -1,5 +1,4 @@
-import v0000 from "../../drizzle/0000_material_george_stacy.sql?raw";
-import v0001 from "../../drizzle/0001_absurd_mandrill.sql?raw";
+import v0000 from "../../drizzle/0000_spotty_bullseye.sql?raw";
 
 import type { PGlite } from "@electric-sql/pglite";
 import { Data, Effect } from "effect";
@@ -20,6 +19,6 @@ export class Migrations extends Effect.Service<Migrations>()("Migrations", {
   effect: Effect.gen(function* () {
     const db = yield* Pglite;
     const migrate = execute(db.client);
-    return [migrate(v0000), migrate(v0001)] as const;
+    return [migrate(v0000)] as const;
   }),
 }) {}
