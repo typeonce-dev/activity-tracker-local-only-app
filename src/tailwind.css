@@ -1,0 +1,14 @@
+@layer theme, base, components, utilities;
+@import "tailwindcss/preflight" layer(base);
+@import "tailwindcss/utilities" layer(utilities);
+
+@theme {
+  --color-magenta: #ed8796;
+  --color-dawn: #f5a97f;
+  --color-skin: #eed49e;
+  --color-emerald: #a6da95;
+  --color-sky: #7dc4e4;
+  --color-fuchsia: #c69ff5;
+  --color-midnight: #24273a;
+  --color-salt: #fff;
+}

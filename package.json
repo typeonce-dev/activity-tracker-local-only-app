@@ -22,11 +22,13 @@
   "dependencies": {
     "@electric-sql/pglite": "^0.2.15",
     "@electric-sql/pglite-react": "^0.2.15",
+    "@tailwindcss/vite": "4.0.0-beta.8",
     "@tanstack/react-router": "^1.95.0",
     "@tanstack/router-devtools": "^1.95.0",
     "drizzle-orm": "^0.38.3",
     "effect": "^3.12.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tailwindcss": "4.0.0-beta.8"
   }
 }

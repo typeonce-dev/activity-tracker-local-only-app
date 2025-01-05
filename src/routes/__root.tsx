@@ -51,11 +51,16 @@ export const Route = createRootRoute({
 function RootComponent() {
   const { client, orm } = Route.useLoaderData();
   return (
-    <PGliteProvider db={client}>
-      <PgliteDrizzleContext.Provider value={orm}>
-        <Outlet />
-        <TanStackRouterDevtools position="bottom-right" />
-      </PgliteDrizzleContext.Provider>
-    </PGliteProvider>
+    <html>
+      <head></head>
+      <body className="bg-midnight text-salt">
+        <PGliteProvider db={client}>
+          <PgliteDrizzleContext.Provider value={orm}>
+            <Outlet />
+            <TanStackRouterDevtools position="bottom-right" />
+          </PgliteDrizzleContext.Provider>
+        </PGliteProvider>
+      </body>
+    </html>
   );
 }
