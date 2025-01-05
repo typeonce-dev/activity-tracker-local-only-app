@@ -1,7 +1,9 @@
+import { PGliteProvider } from "@electric-sql/pglite-react";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { Array, Effect } from "effect";
 import { systemTable } from "../db";
+import { PgliteDrizzleContext } from "../lib/hooks/use-pglite-drizzle";
 import { RuntimeClient } from "../lib/runtime-client";
 import { Migrations } from "../lib/services/migrations";
 import { Pglite } from "../lib/services/pglite";
@@ -12,7 +14,7 @@ export const Route = createRootRoute({
     RuntimeClient.runPromise(
       Effect.gen(function* () {
         const migrations = yield* Migrations;
-        const { query } = yield* Pglite;
+        const { query, client, orm } = yield* Pglite;
 
         const latestVersion = migrations.length;
         const { version } = yield* query((_) =>
@@ -40,18 +42,20 @@ export const Route = createRootRoute({
             : `Migrations done (from ${version} to ${latestVersion})`
         );
 
-        return latestVersion;
+        return { client, orm };
       }).pipe(Effect.tapErrorCause(Effect.logError))
     ),
-  pendingComponent: () => <div>Loading...</div>,
   errorComponent: (error) => <pre>{JSON.stringify(error, null, 2)}</pre>,
 });
 
 function RootComponent() {
+  const { client, orm } = Route.useLoaderData();
   return (
-    <>
-      <Outlet />
-      <TanStackRouterDevtools position="bottom-right" />
-    </>
+    <PGliteProvider db={client}>
+      <PgliteDrizzleContext.Provider value={orm}>
+        <Outlet />
+        <TanStackRouterDevtools position="bottom-right" />
+      </PgliteDrizzleContext.Provider>
+    </PGliteProvider>
   );
 }
