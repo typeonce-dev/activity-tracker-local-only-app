@@ -29,7 +29,7 @@ function HomeComponent() {
   const { date } = Route.useSearch();
   return (
     <div className="mx-auto max-w-[32rem] py-12 flex flex-col gap-y-12">
-      <div className="flex flex-col gap-y-8 items-center">
+      <div className="flex flex-col gap-y-12 items-center">
         <div className="flex flex-col items-center gap-y-4">
           <Link
             to="."

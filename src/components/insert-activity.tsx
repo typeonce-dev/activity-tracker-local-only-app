@@ -1,18 +1,20 @@
-import { Either } from "effect";
 import { Radio } from "react-aria-components";
 import { useGetCategories } from "../lib/hooks/use-get-categories";
 import { useInsertActivity } from "../lib/hooks/use-insert-activity";
 import CategoryDot from "./category-dot";
+import Spinner from "./Spinner";
 import { Button } from "./ui/button";
 import { RadioGroup } from "./ui/radio-group";
 import { FieldError, Input, Label, TextField } from "./ui/text-field";
 
 export default function InsertActivity() {
   const [, action, pending] = useInsertActivity();
-  const categories = useGetCategories();
+  const { data, error, loading } = useGetCategories();
 
-  if (Either.isLeft(categories)) {
-    return <div>Loading...</div>;
+  if (loading) {
+    return <Spinner />;
+  } else if (error) {
+    return <div>{error.message}</div>;
   }
 
   return (
@@ -25,7 +27,7 @@ export default function InsertActivity() {
 
       <RadioGroup className="flex flex-wrap gap-2" name="category-id">
         <Label hidden>Category</Label>
-        {categories.right.map((category) => (
+        {data.map((category) => (
           <Radio
             key={category.categoryId}
             id={`${category.categoryId}`}

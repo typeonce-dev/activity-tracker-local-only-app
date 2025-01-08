@@ -1,16 +1,23 @@
-import { Either } from "effect";
 import { PlusIcon } from "lucide-react";
 import { Button } from "react-aria-components";
 import { useGetActivities } from "../lib/hooks/use-get-activities";
 import { useInsertLog } from "../lib/hooks/use-insert-log";
 import { textColor } from "../styles";
+import Spinner from "./Spinner";
 
 export default function InsertLog({ date }: { date: string }) {
-  const activities = useGetActivities();
   const [, action, pending] = useInsertLog(date);
-  return Either.isRight(activities) ? (
+  const { data, error, loading } = useGetActivities();
+
+  if (loading) {
+    return <Spinner />;
+  } else if (error) {
+    return <div>{error.message}</div>;
+  }
+
+  return (
     <div className="flex flex-wrap gap-2">
-      {activities.right.map((activity) => (
+      {data.map((activity) => (
         <div
           key={activity.activityId}
           className={textColor({
@@ -43,7 +50,5 @@ export default function InsertLog({ date }: { date: string }) {
         </div>
       ))}
     </div>
-  ) : (
-    <div>{activities.left._tag}</div>
   );
 }

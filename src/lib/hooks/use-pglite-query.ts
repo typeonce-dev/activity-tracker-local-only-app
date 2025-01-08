@@ -1,10 +1,10 @@
 import { useLiveQuery } from "@electric-sql/pglite-react";
 import type { Query } from "drizzle-orm";
 import {
-  Array,
   Data,
   Either,
   flow,
+  Match,
   pipe,
   Schema,
   type ParseResult,
@@ -31,21 +31,28 @@ export const useQuery = <A, I>(
         Schema.decodeEither(Schema.Array(schema)),
         Either.mapLeft((parseError) => new InvalidData({ parseError }))
       )
-    )
-  );
-};
-
-export const useQuerySingle = <A, I>(
-  ...args: Parameters<typeof useQuery<A, I>>
-) => {
-  const results = useQuery(...args);
-  return pipe(
-    results,
-    Either.flatMap(
-      flow(
-        Array.head,
-        Either.fromOption(() => new MissingData())
-      )
-    )
+    ),
+    Either.match({
+      onLeft: (_) =>
+        Match.value(_).pipe(
+          Match.tagsExhaustive({
+            InvalidData: ({ parseError }) => ({
+              error: parseError,
+              loading: false as const,
+              data: undefined,
+            }),
+            MissingData: (_) => ({
+              loading: true as const,
+              data: undefined,
+              error: undefined,
+            }),
+          })
+        ),
+      onRight: (rows) => ({
+        data: rows,
+        loading: false as const,
+        error: undefined,
+      }),
+    })
   );
 };
