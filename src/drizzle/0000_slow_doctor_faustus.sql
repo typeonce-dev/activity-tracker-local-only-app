@@ -2,13 +2,15 @@ CREATE TYPE "public"."color" AS ENUM('magenta', 'dawn', 'skin', 'emerald', 'sky'
 CREATE TABLE "activity" (
 	"activityId" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "activity_activityId_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
 	"name" varchar NOT NULL,
-	"category_id" integer NOT NULL
+	"category_id" integer NOT NULL,
+	CONSTRAINT "activity_name_unique" UNIQUE("name")
 );
 --> statement-breakpoint
 CREATE TABLE "category" (
 	"categoryId" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "category_categoryId_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
 	"name" varchar NOT NULL,
-	"color" "color" NOT NULL
+	"color" "color" NOT NULL,
+	CONSTRAINT "category_name_unique" UNIQUE("name")
 );
 --> statement-breakpoint
 CREATE TABLE "log" (

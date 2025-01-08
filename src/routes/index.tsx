@@ -27,19 +27,19 @@ export const Route = createFileRoute("/")({
 
 function HomeComponent() {
   const { date } = Route.useSearch();
+  const isToday = date === DateTime.formatIsoDate(DateTime.unsafeNow());
   return (
     <div className="mx-auto max-w-[32rem] py-12 flex flex-col gap-y-12">
       <div className="flex flex-col gap-y-12 items-center">
         <div className="flex flex-col items-center gap-y-4">
           <Link
             to="."
-            className="text-sm text-sky hover:cursor-pointer hover:underline inline-flex items-center gap-x-2 group"
+            disabled={isToday}
+            data-disabled={isToday}
+            className="text-sm text-sky hover:cursor-pointer hover:underline inline-flex items-center gap-x-2 group data-[disabled=true]:opacity-10 hover:data-[disabled=false]:[&>[data-slot=icon]]:-rotate-180 [&>[data-slot=icon]]:transition-transform [&>[data-slot=icon]]:duration-300"
           >
             <span>Today</span>
-            <RotateCcw
-              size={12}
-              className="group-hover:-rotate-270 transition-transform duration-300"
-            />
+            <RotateCcw size={12} data-slot="icon" />
           </Link>
           <div className="flex items-center justify-between gap-x-8">
             <Link
