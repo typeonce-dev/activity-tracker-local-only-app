@@ -33,7 +33,10 @@ export default function InsertLog({ date }: { date: string }) {
               isDisabled={pending}
               className="hover:cursor-pointer"
             >
-              <PlusIcon size={16} />
+              <PlusIcon
+                size={16}
+                className="hover:scale-125 transition-transform duration-150"
+              />
             </Button>
           </form>
           <span className="text-sm">{activity.name}</span>

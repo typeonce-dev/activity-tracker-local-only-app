@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { DateTime, Effect, Schema } from "effect";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, RotateCcw } from "lucide-react";
 import DateLogs from "../components/date-logs";
 import InsertActivity from "../components/insert-activity";
 import InsertCategory from "../components/insert-category";
@@ -33,9 +33,13 @@ function HomeComponent() {
         <div className="flex flex-col items-center gap-y-4">
           <Link
             to="."
-            className="text-sm text-sky hover:cursor-pointer hover:underline"
+            className="text-sm text-sky hover:cursor-pointer hover:underline inline-flex items-center gap-x-2 group"
           >
-            Today
+            <span>Today</span>
+            <RotateCcw
+              size={12}
+              className="group-hover:-rotate-270 transition-transform duration-300"
+            />
           </Link>
           <div className="flex items-center justify-between gap-x-8">
             <Link

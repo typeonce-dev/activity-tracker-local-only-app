@@ -29,7 +29,10 @@ export default function DateLogs({ date }: { date: string }) {
               isDisabled={pending}
               className="text-sm hover:cursor-pointer"
             >
-              <XIcon size={16} />
+              <XIcon
+                size={16}
+                className="hover:scale-125 transition-transform duration-150"
+              />
             </Button>
           </form>
           <span>{log.name}</span>
