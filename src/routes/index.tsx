@@ -1,11 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { DateTime, Effect, Either, Schema } from "effect";
+import { DateTime, Effect, Schema } from "effect";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import DateLogs from "../components/date-logs";
 import InsertActivity from "../components/insert-activity";
 import InsertCategory from "../components/insert-category";
 import InsertLog from "../components/insert-log";
-import { useGetLogByDate } from "../lib/hooks/use-get-log-by-date";
-import { textColor } from "../styles";
 
 export const Route = createFileRoute("/")({
   component: HomeComponent,
@@ -28,7 +27,6 @@ export const Route = createFileRoute("/")({
 
 function HomeComponent() {
   const { date } = Route.useSearch();
-  const logByDate = useGetLogByDate(date);
   return (
     <div className="mx-auto max-w-[32rem] py-12 flex flex-col gap-y-12">
       <div className="flex flex-col gap-y-8 items-center">
@@ -74,23 +72,7 @@ function HomeComponent() {
           </div>
         </div>
 
-        {Either.isRight(logByDate) ? (
-          <div className="flex flex-wrap gap-2">
-            {logByDate.right.map((log) => (
-              <span
-                key={log.logId}
-                className={textColor({
-                  theme: log.color,
-                  className: "border rounded-md px-2 py-1 text-sm",
-                })}
-              >
-                {log.name}
-              </span>
-            ))}
-          </div>
-        ) : (
-          <div>{logByDate.left._tag}</div>
-        )}
+        <DateLogs date={date} />
 
         <InsertLog date={date} />
       </div>

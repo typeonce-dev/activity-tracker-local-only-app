@@ -1,4 +1,5 @@
 import { Either } from "effect";
+import { PlusIcon } from "lucide-react";
 import { Button } from "react-aria-components";
 import { useGetActivities } from "../lib/hooks/use-get-activities";
 import { useInsertLog } from "../lib/hooks/use-insert-log";
@@ -10,27 +11,33 @@ export default function InsertLog({ date }: { date: string }) {
   return Either.isRight(activities) ? (
     <div className="flex flex-wrap gap-2">
       {activities.right.map((activity) => (
-        <form
+        <div
           key={activity.activityId}
-          action={action}
           className={textColor({
             theme: activity.color,
-            className: "border rounded-md",
+            className:
+              "border rounded-md inline-flex items-center gap-x-2 px-2 py-1",
           })}
         >
-          <Button
-            type="submit"
-            isDisabled={pending}
-            className="px-2 py-1 text-sm hover:cursor-pointer"
+          <form
+            action={action}
+            className="inline-flex items-center justify-center"
           >
             <input
               type="hidden"
               value={activity.activityId}
               name="activity-id"
             />
-            {activity.name}
-          </Button>
-        </form>
+            <Button
+              type="submit"
+              isDisabled={pending}
+              className="hover:cursor-pointer"
+            >
+              <PlusIcon size={16} />
+            </Button>
+          </form>
+          <span className="text-sm">{activity.name}</span>
+        </div>
       ))}
     </div>
   ) : (

@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import { Data, Effect, flow, Schema } from "effect";
 import { activityTable, categoryTable, logTable } from "../../db";
 import { Color } from "../schema";
@@ -49,6 +50,10 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
           query((_) =>
             _.insert(logTable).values({ date, activityIdRef: activityId })
           )
+      ),
+
+      deleteLog: execute(Schema.Struct({ logId: Schema.Number }), ({ logId }) =>
+        query((_) => _.delete(logTable).where(eq(logTable.logId, logId)))
       ),
     };
   }),
