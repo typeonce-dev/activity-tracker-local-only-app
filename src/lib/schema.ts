@@ -27,3 +27,14 @@ export class ActivitySelect extends Schema.Class<ActivitySelect>(
   categoryName: Schema.String,
   color: Color,
 }) {}
+
+export class LogByDateSelect extends Schema.Class<LogByDateSelect>(
+  "LogByDateSelect"
+)({
+  logId: Schema.Number,
+  date: Schema.DateFromSelf,
+  note: Schema.NullOr(Schema.String),
+  name: Schema.String,
+  categoryName: Schema.String,
+  color: Color,
+}) {}

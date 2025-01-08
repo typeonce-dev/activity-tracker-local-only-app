@@ -1,5 +1,5 @@
 import { Data, Effect, flow, Schema } from "effect";
-import { activityTable, categoryTable } from "../../db";
+import { activityTable, categoryTable, logTable } from "../../db";
 import { Color } from "../schema";
 import { Pglite } from "./pglite";
 
@@ -40,6 +40,14 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
         ({ name, categoryId }) =>
           query((_) =>
             _.insert(activityTable).values({ name, categoryIdRef: categoryId })
+          )
+      ),
+
+      insertLog: execute(
+        Schema.Struct({ date: Schema.String, activityId: Schema.Number }),
+        ({ date, activityId }) =>
+          query((_) =>
+            _.insert(logTable).values({ date, activityIdRef: activityId })
           )
       ),
     };

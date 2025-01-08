@@ -3,7 +3,8 @@ import { DateTime, Effect, Either, Schema } from "effect";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import InsertActivity from "../components/insert-activity";
 import InsertCategory from "../components/insert-category";
-import { useGetActivities } from "../lib/hooks/use-get-activities";
+import InsertLog from "../components/insert-log";
+import { useGetLogByDate } from "../lib/hooks/use-get-log-by-date";
 import { textColor } from "../styles";
 
 export const Route = createFileRoute("/")({
@@ -27,7 +28,7 @@ export const Route = createFileRoute("/")({
 
 function HomeComponent() {
   const { date } = Route.useSearch();
-  const activities = useGetActivities();
+  const logByDate = useGetLogByDate(date);
   return (
     <div className="mx-auto max-w-[32rem] py-12 flex flex-col gap-y-12">
       <div className="flex flex-col gap-y-8 items-center">
@@ -73,23 +74,25 @@ function HomeComponent() {
           </div>
         </div>
 
-        {Either.isRight(activities) ? (
+        {Either.isRight(logByDate) ? (
           <div className="flex flex-wrap gap-2">
-            {activities.right.map((activity) => (
+            {logByDate.right.map((log) => (
               <span
-                key={activity.activityId}
+                key={log.logId}
                 className={textColor({
-                  theme: activity.color,
+                  theme: log.color,
                   className: "border rounded-md px-2 py-1 text-sm",
                 })}
               >
-                {activity.name}
+                {log.name}
               </span>
             ))}
           </div>
         ) : (
-          <div>{activities.left._tag}</div>
+          <div>{logByDate.left._tag}</div>
         )}
+
+        <InsertLog date={date} />
       </div>
 
       <hr className="text-sky/30" />
