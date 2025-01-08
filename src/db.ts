@@ -5,13 +5,13 @@ export const colorColumn = pgEnum("color", Color.literals);
 
 export const categoryTable = pgTable("category", {
   categoryId: integer().primaryKey().generatedAlwaysAsIdentity(),
-  name: varchar().notNull(),
+  name: varchar().unique().notNull(),
   color: colorColumn().notNull(),
 });
 
 export const activityTable = pgTable("activity", {
   activityId: integer().primaryKey().generatedAlwaysAsIdentity(),
-  name: varchar().notNull(),
+  name: varchar().unique().notNull(),
   categoryIdRef: integer("category_id")
     .references(() => categoryTable.categoryId)
     .notNull(),

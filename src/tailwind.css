@@ -18,6 +18,9 @@
   --text-sm: 0.875rem;
   --text-sm--line-height: calc(1.25 / 0.875);
 
+  --text-xl: 1.25rem;
+  --text-xl--line-height: calc(1.75 / 1.25);
+
   --font-weight-light: 300;
   --font-weight-normal: 400;
   --font-weight-bold: 700;
