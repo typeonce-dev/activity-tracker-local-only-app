@@ -31,38 +31,46 @@ function HomeComponent() {
   return (
     <div className="mx-auto max-w-[32rem] py-12 flex flex-col gap-y-12">
       <div className="flex flex-col gap-y-8 items-center">
-        <div className="flex items-center justify-between gap-x-8">
+        <div className="flex flex-col items-center gap-y-4">
           <Link
-            to="/"
-            search={(_) => ({
-              date: DateTime.formatIsoDate(
-                DateTime.unsafeFromDate(new Date(date)).pipe(
-                  DateTime.subtract({ days: 1 })
-                )
-              ),
-            })}
+            to="."
+            className="text-sm text-sky hover:cursor-pointer hover:underline"
           >
-            <ArrowLeft className="text-sky hover:cursor-pointer" />
+            Today
           </Link>
-          <p className="text-sky text-xl text-center font-bold">
-            {new Date(date).toLocaleDateString(undefined, {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </p>
-          <Link
-            to="/"
-            search={(_) => ({
-              date: DateTime.formatIsoDate(
-                DateTime.unsafeFromDate(new Date(date)).pipe(
-                  DateTime.add({ days: 1 })
-                )
-              ),
-            })}
-          >
-            <ArrowRight className="text-sky hover:cursor-pointer" />
-          </Link>
+          <div className="flex items-center justify-between gap-x-8">
+            <Link
+              to="."
+              search={(_) => ({
+                date: DateTime.formatIsoDate(
+                  DateTime.unsafeFromDate(new Date(date)).pipe(
+                    DateTime.subtract({ days: 1 })
+                  )
+                ),
+              })}
+            >
+              <ArrowLeft className="text-sky hover:cursor-pointer" />
+            </Link>
+            <p className="text-sky text-xl text-center font-bold">
+              {new Date(date).toLocaleDateString(undefined, {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
+            <Link
+              to="."
+              search={(_) => ({
+                date: DateTime.formatIsoDate(
+                  DateTime.unsafeFromDate(new Date(date)).pipe(
+                    DateTime.add({ days: 1 })
+                  )
+                ),
+              })}
+            >
+              <ArrowRight className="text-sky hover:cursor-pointer" />
+            </Link>
+          </div>
         </div>
 
         {Either.isRight(activities) ? (
