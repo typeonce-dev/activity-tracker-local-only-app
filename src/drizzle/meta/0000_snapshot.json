@@ -1,5 +1,5 @@
 {
-  "id": "a124d557-1d2d-48db-9985-855f39fd0d94",
+  "id": "7f91f4f4-51a6-450c-9aa5-a43d21bc59ee",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -8,14 +8,14 @@
       "name": "activity",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
+        "activityId": {
+          "name": "activityId",
           "type": "integer",
           "primaryKey": true,
           "notNull": true,
           "identity": {
             "type": "always",
-            "name": "activity_id_seq",
+            "name": "activity_activityId_seq",
             "schema": "public",
             "increment": "1",
             "startWith": "1",
@@ -35,20 +35,20 @@
           "name": "category_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "activity_category_id_category_id_fk": {
-          "name": "activity_category_id_category_id_fk",
+        "activity_category_id_category_categoryId_fk": {
+          "name": "activity_category_id_category_categoryId_fk",
           "tableFrom": "activity",
           "tableTo": "category",
           "columnsFrom": [
             "category_id"
           ],
           "columnsTo": [
-            "id"
+            "categoryId"
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
@@ -64,14 +64,14 @@
       "name": "category",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
+        "categoryId": {
+          "name": "categoryId",
           "type": "integer",
           "primaryKey": true,
           "notNull": true,
           "identity": {
             "type": "always",
-            "name": "category_id_seq",
+            "name": "category_categoryId_seq",
             "schema": "public",
             "increment": "1",
             "startWith": "1",
@@ -107,14 +107,14 @@
       "name": "log",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
+        "logId": {
+          "name": "logId",
           "type": "integer",
           "primaryKey": true,
           "notNull": true,
           "identity": {
             "type": "always",
-            "name": "log_id_seq",
+            "name": "log_logId_seq",
             "schema": "public",
             "increment": "1",
             "startWith": "1",
@@ -130,30 +130,30 @@
           "primaryKey": false,
           "notNull": true
         },
-        "activity_id": {
-          "name": "activity_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
         "note": {
           "name": "note",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
+        },
+        "activity_id": {
+          "name": "activity_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "log_activity_id_activity_id_fk": {
-          "name": "log_activity_id_activity_id_fk",
+        "log_activity_id_activity_activityId_fk": {
+          "name": "log_activity_id_activity_activityId_fk",
           "tableFrom": "log",
           "tableTo": "activity",
           "columnsFrom": [
             "activity_id"
           ],
           "columnsTo": [
-            "id"
+            "activityId"
           ],
           "onDelete": "no action",
           "onUpdate": "no action"

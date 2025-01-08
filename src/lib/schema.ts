@@ -14,7 +14,16 @@ export const Color = Schema.Literal(
 export class CategorySelect extends Schema.Class<CategorySelect>(
   "CategorySelect"
 )({
-  id: Schema.Number,
+  categoryId: Schema.Number,
   name: Schema.String,
+  color: Color,
+}) {}
+
+export class ActivitySelect extends Schema.Class<ActivitySelect>(
+  "ActivitySelect"
+)({
+  activityId: Schema.Number,
+  name: Schema.String,
+  categoryName: Schema.String,
   color: Color,
 }) {}

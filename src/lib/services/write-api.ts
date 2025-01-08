@@ -1,5 +1,5 @@
 import { Data, Effect, flow, Schema } from "effect";
-import { categoryTable } from "../../db";
+import { activityTable, categoryTable } from "../../db";
 import { Color } from "../schema";
 import { Pglite } from "./pglite";
 
@@ -20,6 +20,7 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
         Schema.decode(schema),
         Effect.flatMap(Schema.encode(schema)),
         Effect.tap((encoded) => Effect.log("Insert", encoded)),
+        Effect.tapError((error) => Effect.log("Error", error)),
         Effect.mapError((error) => new WriteApiError({ cause: error })),
         Effect.flatMap(exec)
       );
@@ -29,6 +30,17 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
         Schema.Struct({ name: Schema.NonEmptyString, color: Color }),
         ({ name, color }) =>
           query((_) => _.insert(categoryTable).values({ name, color }))
+      ),
+
+      insertActivity: execute(
+        Schema.Struct({
+          name: Schema.NonEmptyString,
+          categoryId: Schema.Number,
+        }),
+        ({ name, categoryId }) =>
+          query((_) =>
+            _.insert(activityTable).values({ name, categoryIdRef: categoryId })
+          )
       ),
     };
   }),

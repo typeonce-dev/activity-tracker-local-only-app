@@ -1,4 +1,4 @@
-import v0000 from "../../drizzle/0000_spotty_bullseye.sql?raw";
+import v0000 from "../../drizzle/0000_ambitious_maggott.sql?raw";
 
 import type { PGlite } from "@electric-sql/pglite";
 import { Data, Effect } from "effect";
