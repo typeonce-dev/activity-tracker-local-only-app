@@ -1,3 +1,4 @@
+import { useActionState } from "react";
 import { Button } from "../components/ui/button";
 import { Radio, RadioGroup } from "../components/ui/radio-group";
 import {
@@ -6,18 +7,29 @@ import {
   Label,
   TextField,
 } from "../components/ui/text-field";
-import { useInsertCategory } from "../lib/hooks/use-insert-category";
+import { RuntimeClient } from "../lib/runtime-client";
+import { Dexie } from "../lib/services/dexie";
+import { SaveFormData } from "../utils";
+
+type FormName = "name" | "color";
 
 export default function InsertCategory() {
-  const [, action, pending] = useInsertCategory();
+  const [, action, pending] = useActionState(
+    (_: unknown, formData: FormData) =>
+      RuntimeClient.runPromise(
+        Dexie.insertCategory(new SaveFormData<FormName>(formData).entriesSchema)
+      ),
+    null
+  );
   return (
     <form action={action} className="flex flex-col gap-y-4">
-      <TextField name="name">
+      <TextField<FormName> name="name">
         <Label hidden>Name</Label>
         <Input />
         <FieldError />
       </TextField>
-      <RadioGroup name="color" className="flex gap-1 flex-wrap">
+
+      <RadioGroup<FormName> name="color" className="flex gap-1 flex-wrap">
         <Label hidden>Color</Label>
         <Radio value="magenta" theme="magenta" />
         <Radio value="dawn" theme="dawn" />
@@ -28,6 +40,7 @@ export default function InsertCategory() {
         <Radio value="midnight" theme="midnight" />
         <Radio value="salt" theme="salt" />
       </RadioGroup>
+
       <Button type="submit" isPending={pending}>
         Save
       </Button>

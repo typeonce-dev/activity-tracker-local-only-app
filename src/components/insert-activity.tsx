@@ -1,15 +1,26 @@
+import { useActionState } from "react";
 import { Radio } from "react-aria-components";
 import { useGetCategories } from "../lib/hooks/use-get-categories";
-import { useInsertActivity } from "../lib/hooks/use-insert-activity";
+import { RuntimeClient } from "../lib/runtime-client";
+import { Dexie } from "../lib/services/dexie";
+import { SaveFormData } from "../utils";
 import CategoryDot from "./category-dot";
 import Loading from "./loading";
 import { Button } from "./ui/button";
 import { RadioGroup } from "./ui/radio-group";
 import { FieldError, Input, Label, TextField } from "./ui/text-field";
 
+type FormName = "name" | "category-id";
+
 export default function InsertActivity() {
-  const [, action, pending] = useInsertActivity();
   const { data, error, loading } = useGetCategories();
+  const [, action, pending] = useActionState(
+    (_: unknown, formData: FormData) =>
+      RuntimeClient.runPromise(
+        Dexie.insertActivity(new SaveFormData<FormName>(formData).entriesSchema)
+      ),
+    null
+  );
 
   if (loading) {
     return <Loading />;
@@ -19,13 +30,13 @@ export default function InsertActivity() {
 
   return (
     <form action={action} className="flex flex-col gap-y-4">
-      <TextField name="name">
+      <TextField<FormName> name="name">
         <Label hidden>Name</Label>
         <Input />
         <FieldError />
       </TextField>
 
-      <RadioGroup className="flex flex-wrap gap-2" name="category-id">
+      <RadioGroup<FormName> className="flex flex-wrap gap-2" name="category-id">
         <Label hidden>Category</Label>
         {data.map((category) => (
           <Radio

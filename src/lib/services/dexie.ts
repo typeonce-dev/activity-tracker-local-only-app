@@ -1,5 +1,5 @@
 import * as _Dexie from "dexie";
-import { Data, Effect, flow, Schema } from "effect";
+import { Data, Effect, pipe, Schema } from "effect";
 import {
   Color,
   type ActivityTable,
@@ -12,6 +12,7 @@ class WriteApiError extends Data.TaggedError("WriteApiError")<{
 }> {}
 
 export class Dexie extends Effect.Service<Dexie>()("Dexie", {
+  accessors: true,
   effect: Effect.gen(function* () {
     const db = new _Dexie.Dexie("_db") as _Dexie.Dexie & {
       category: _Dexie.EntityTable<typeof CategoryTable.Encoded, "categoryId">;
@@ -25,23 +26,23 @@ export class Dexie extends Effect.Service<Dexie>()("Dexie", {
       log: "++logId, date",
     });
 
-    const execute = <A, I, T, E>(
-      schema: Schema.Schema<A, I>,
-      exec: (values: I) => Promise<T>
-    ) =>
-      flow(
-        Schema.decode(schema),
-        Effect.flatMap(Schema.encode(schema)),
-        Effect.tap((encoded) => Effect.log("Insert", encoded)),
-        Effect.tapError((error) => Effect.log("Error", error)),
-        Effect.mapError((error) => new WriteApiError({ cause: error })),
-        Effect.flatMap((values) =>
-          Effect.tryPromise({
-            try: () => exec(values),
-            catch: (error) => new WriteApiError({ cause: error }),
-          })
-        )
-      );
+    const execute =
+      <A, I, T>(schema: Schema.Schema<A, I>, exec: (values: I) => Promise<T>) =>
+      (extending: (_: typeof schema) => I) =>
+        pipe(
+          extending(schema),
+          Schema.decode(schema),
+          Effect.flatMap(Schema.encode(schema)),
+          Effect.tap((encoded) => Effect.log("Insert", encoded)),
+          Effect.tapError((error) => Effect.log("Error", error)),
+          Effect.mapError((error) => new WriteApiError({ cause: error })),
+          Effect.flatMap((values) =>
+            Effect.tryPromise({
+              try: () => exec(values),
+              catch: (error) => new WriteApiError({ cause: error }),
+            })
+          )
+        );
 
     return {
       db,

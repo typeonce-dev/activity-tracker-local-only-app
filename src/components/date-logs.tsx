@@ -1,13 +1,25 @@
 import { XIcon } from "lucide-react";
+import { useActionState } from "react";
 import { Button } from "react-aria-components";
-import { useDeleteLog } from "../lib/hooks/use-delete-log";
 import { useGetLogByDate } from "../lib/hooks/use-get-log-by-date";
+import { RuntimeClient } from "../lib/runtime-client";
+import { Dexie } from "../lib/services/dexie";
 import { textColor } from "../styles";
+import { SaveFormData } from "../utils";
 import Loading from "./loading";
+import SaveInput from "./ui/save-input";
+
+type FormName = "log-id";
 
 export default function DateLogs({ date }: { date: string }) {
-  const [_, action, pending] = useDeleteLog();
   const { error, data, loading } = useGetLogByDate(date);
+  const [_, action, pending] = useActionState(
+    (_: unknown, formData: FormData) =>
+      RuntimeClient.runPromise(
+        Dexie.deleteLog(new SaveFormData<FormName>(formData).entriesSchema)
+      ),
+    null
+  );
 
   if (loading) {
     return <Loading />;
@@ -33,7 +45,11 @@ export default function DateLogs({ date }: { date: string }) {
               action={action}
               className="inline-flex items-center justify-center"
             >
-              <input type="hidden" value={log.logId} name="log-id" />
+              <SaveInput<FormName>
+                type="hidden"
+                value={log.logId}
+                name="log-id"
+              />
               <Button
                 type="submit"
                 isDisabled={pending}

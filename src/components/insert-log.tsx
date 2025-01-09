@@ -1,13 +1,25 @@
 import { PlusIcon } from "lucide-react";
+import { useActionState } from "react";
 import { Button } from "react-aria-components";
 import { useGetActivities } from "../lib/hooks/use-get-activities";
-import { useInsertLog } from "../lib/hooks/use-insert-log";
+import { RuntimeClient } from "../lib/runtime-client";
+import { Dexie } from "../lib/services/dexie";
 import { textColor } from "../styles";
+import { SaveFormData } from "../utils";
 import Loading from "./loading";
+import SaveInput from "./ui/save-input";
+
+type FormName = "activity-id" | "date";
 
 export default function InsertLog({ date }: { date: string }) {
-  const [, action, pending] = useInsertLog(date);
   const { data, error, loading } = useGetActivities();
+  const [, action, pending] = useActionState(
+    (_: unknown, formData: FormData) =>
+      RuntimeClient.runPromise(
+        Dexie.insertLog(new SaveFormData<FormName>(formData).entriesSchema)
+      ),
+    null
+  );
 
   if (loading) {
     return <Loading />;
@@ -30,11 +42,12 @@ export default function InsertLog({ date }: { date: string }) {
             action={action}
             className="inline-flex items-center justify-center"
           >
-            <input
+            <SaveInput<FormName>
               type="hidden"
               value={activity.activityId}
               name="activity-id"
             />
+            <SaveInput<FormName> type="hidden" value={date} name="date" />
             <Button
               type="submit"
               isDisabled={pending}

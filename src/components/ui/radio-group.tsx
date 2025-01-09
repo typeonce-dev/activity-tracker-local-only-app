@@ -19,7 +19,11 @@ const radio = cva(
   }
 );
 
-const RadioGroup = ({ ...props }: Aria.RadioGroupProps) => {
+const RadioGroup = <Name extends string = never>({
+  ...props
+}: Omit<Aria.RadioGroupProps, "name"> & {
+  name: Name;
+}) => {
   return <Aria.RadioGroup {...props} />;
 };
 

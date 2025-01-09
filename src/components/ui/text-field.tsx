@@ -1,7 +1,11 @@
 import * as Aria from "react-aria-components";
 import { cn } from "../../utils";
 
-const TextField = ({ ...props }: Aria.TextFieldProps) => {
+const TextField = <Name extends string = never>({
+  ...props
+}: Omit<Aria.TextFieldProps, "name"> & {
+  name: Name;
+}) => {
   return <Aria.TextField {...props} />;
 };
 
