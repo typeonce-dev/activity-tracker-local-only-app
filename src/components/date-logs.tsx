@@ -3,14 +3,14 @@ import { Button } from "react-aria-components";
 import { useDeleteLog } from "../lib/hooks/use-delete-log";
 import { useGetLogByDate } from "../lib/hooks/use-get-log-by-date";
 import { textColor } from "../styles";
-import Spinner from "./spinner";
+import Loading from "./loading";
 
 export default function DateLogs({ date }: { date: string }) {
   const [_, action, pending] = useDeleteLog();
   const { error, data, loading } = useGetLogByDate(date);
 
   if (loading) {
-    return <Spinner />;
+    return <Loading />;
   } else if (error) {
     return <div>{error.message}</div>;
   }

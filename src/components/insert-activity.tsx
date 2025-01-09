@@ -2,7 +2,7 @@ import { Radio } from "react-aria-components";
 import { useGetCategories } from "../lib/hooks/use-get-categories";
 import { useInsertActivity } from "../lib/hooks/use-insert-activity";
 import CategoryDot from "./category-dot";
-import Spinner from "./spinner";
+import Loading from "./loading";
 import { Button } from "./ui/button";
 import { RadioGroup } from "./ui/radio-group";
 import { FieldError, Input, Label, TextField } from "./ui/text-field";
@@ -12,7 +12,7 @@ export default function InsertActivity() {
   const { data, error, loading } = useGetCategories();
 
   if (loading) {
-    return <Spinner />;
+    return <Loading />;
   } else if (error) {
     return <div>{error.message}</div>;
   }
