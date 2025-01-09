@@ -1,23 +1,19 @@
-import { eq, sql } from "drizzle-orm";
-import { activityTable, categoryTable } from "../../db";
 import { ActivitySelect } from "../schema";
-import { useQuery } from "./use-pglite-query";
+import { useQuery } from "./use-dexie-query";
 
 export const useGetActivities = () => {
-  return useQuery(
-    (_) =>
-      _.select({
-        activityId: activityTable.activityId,
-        name: activityTable.name,
-        categoryName: sql`${categoryTable.name}`.as("categoryName"),
-        color: categoryTable.color,
+  return useQuery(async (_) => {
+    const activities = await _.activity.toArray();
+    return Promise.all(
+      activities.map(async (activity) => {
+        const category = await _.category.get(activity.categoryIdRef);
+        return {
+          activityId: activity.activityId,
+          name: activity.name,
+          categoryName: category?.name!,
+          color: category?.color!,
+        };
       })
-        .from(activityTable)
-        .innerJoin(
-          categoryTable,
-          eq(categoryTable.categoryId, activityTable.categoryIdRef)
-        )
-        .toSQL(),
-    ActivitySelect
-  );
+    );
+  }, ActivitySelect);
 };
