@@ -8,8 +8,7 @@
     "dev": "vite --port=3001",
     "build": "vite build",
     "serve": "vite preview",
-    "start": "vite",
-    "generate": "pnpm drizzle-kit generate"
+    "start": "vite"
   },
   "devDependencies": {
     "@tanstack/router-plugin": "^1.95.0",
@@ -22,7 +21,6 @@
   "dependencies": {
     "@tailwindcss/vite": "4.0.0-beta.8",
     "@tanstack/react-router": "^1.95.0",
-    "@tanstack/router-devtools": "^1.95.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dexie": "^4.0.10",
@@ -31,7 +29,6 @@
     "lucide-react": "^0.469.0",
     "react": "^19.0.0",
     "react-aria-components": "^1.5.0",
-    "react-day-picker": "^9.5.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^2.6.0",
     "tailwindcss": "4.0.0-beta.8"

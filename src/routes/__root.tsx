@@ -9,7 +9,6 @@ function RootComponent() {
   return (
     <div className="bg-midnight text-salt min-h-dvh">
       <Outlet />
-      {/* <TanStackRouterDevtools position="bottom-right" /> */}
     </div>
   );
 }
