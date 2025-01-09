@@ -3,7 +3,7 @@ import { Button } from "react-aria-components";
 import { useDeleteLog } from "../lib/hooks/use-delete-log";
 import { useGetLogByDate } from "../lib/hooks/use-get-log-by-date";
 import { textColor } from "../styles";
-import Spinner from "./Spinner";
+import Spinner from "./spinner";
 
 export default function DateLogs({ date }: { date: string }) {
   const [_, action, pending] = useDeleteLog();

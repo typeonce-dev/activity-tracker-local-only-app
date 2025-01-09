@@ -3,7 +3,7 @@ import { Button } from "react-aria-components";
 import { useGetActivities } from "../lib/hooks/use-get-activities";
 import { useInsertLog } from "../lib/hooks/use-insert-log";
 import { textColor } from "../styles";
-import Spinner from "./Spinner";
+import Spinner from "./spinner";
 
 export default function InsertLog({ date }: { date: string }) {
   const [, action, pending] = useInsertLog(date);
