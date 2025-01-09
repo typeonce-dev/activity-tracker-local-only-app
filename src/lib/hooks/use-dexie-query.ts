@@ -1,7 +1,7 @@
-import { useLiveQuery } from "@electric-sql/pglite-react";
-import type { Query } from "drizzle-orm";
+import { useLiveQuery } from "dexie-react-hooks";
 import {
   Data,
+  Effect,
   Either,
   flow,
   Match,
@@ -9,22 +9,37 @@ import {
   Schema,
   type ParseResult,
 } from "effect";
-import { usePgliteDrizzle } from "./use-pglite-drizzle";
+import { RuntimeClient } from "../runtime-client";
+import { Dexie } from "../services/dexie";
 
+class DatabaseError extends Data.TaggedError("DatabaseError")<{
+  cause: unknown;
+}> {}
 class MissingData extends Data.TaggedError("MissingData")<{}> {}
 class InvalidData extends Data.TaggedError("InvalidData")<{
   parseError: ParseResult.ParseError;
 }> {}
 
 export const useQuery = <A, I>(
-  query: (orm: ReturnType<typeof usePgliteDrizzle>) => Query,
-  schema: Schema.Schema<A, I>
+  query: (db: (typeof Dexie.Service)["db"]) => Promise<I[]>,
+  schema: Schema.Schema<A, I>,
+  deps: unknown[] = []
 ) => {
-  const orm = usePgliteDrizzle();
-  const { params, sql } = query(orm);
-  const results = useLiveQuery<I>(sql, params);
+  const results = useLiveQuery(
+    () =>
+      RuntimeClient.runPromise(
+        Effect.gen(function* () {
+          const { db } = yield* Dexie;
+          return yield* Effect.tryPromise({
+            try: () => query(db),
+            catch: (error) => new DatabaseError({ cause: error }),
+          });
+        })
+      ),
+    deps
+  );
   return pipe(
-    results?.rows,
+    results,
     Either.fromNullable(() => new MissingData()),
     Either.flatMap(
       flow(

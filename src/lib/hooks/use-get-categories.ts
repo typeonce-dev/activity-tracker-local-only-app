@@ -1,10 +1,6 @@
-import { categoryTable } from "../../db";
 import { CategorySelect } from "../schema";
-import { useQuery } from "./use-pglite-query";
+import { useQuery } from "./use-dexie-query";
 
 export const useGetCategories = () => {
-  return useQuery(
-    (_) => _.select().from(categoryTable).toSQL(),
-    CategorySelect
-  );
+  return useQuery((_) => _.category.toArray(), CategorySelect);
 };
