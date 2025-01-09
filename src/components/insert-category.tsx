@@ -9,16 +9,13 @@ import {
 } from "../components/ui/text-field";
 import { RuntimeClient } from "../lib/runtime-client";
 import { Dexie } from "../lib/services/dexie";
-import { SaveFormData } from "../utils";
 
 type FormName = "name" | "color";
 
 export default function InsertCategory() {
   const [, action, pending] = useActionState(
     (_: unknown, formData: FormData) =>
-      RuntimeClient.runPromise(
-        Dexie.insertCategory(new SaveFormData<FormName>(formData).entriesSchema)
-      ),
+      RuntimeClient.runPromise(Dexie.insertCategory(formData)),
     null
   );
   return (

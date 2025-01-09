@@ -3,7 +3,6 @@ import { Radio } from "react-aria-components";
 import { useGetCategories } from "../lib/hooks/use-get-categories";
 import { RuntimeClient } from "../lib/runtime-client";
 import { Dexie } from "../lib/services/dexie";
-import { SaveFormData } from "../utils";
 import CategoryDot from "./category-dot";
 import Loading from "./loading";
 import { Button } from "./ui/button";
@@ -16,9 +15,7 @@ export default function InsertActivity() {
   const { data, error, loading } = useGetCategories();
   const [, action, pending] = useActionState(
     (_: unknown, formData: FormData) =>
-      RuntimeClient.runPromise(
-        Dexie.insertActivity(new SaveFormData<FormName>(formData).entriesSchema)
-      ),
+      RuntimeClient.runPromise(Dexie.insertActivity(formData)),
     null
   );
 

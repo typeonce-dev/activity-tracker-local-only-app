@@ -5,7 +5,6 @@ import { useGetLogByDate } from "../lib/hooks/use-get-log-by-date";
 import { RuntimeClient } from "../lib/runtime-client";
 import { Dexie } from "../lib/services/dexie";
 import { textColor } from "../styles";
-import { SaveFormData } from "../utils";
 import Loading from "./loading";
 import SaveInput from "./ui/save-input";
 
@@ -15,9 +14,7 @@ export default function DateLogs({ date }: { date: string }) {
   const { error, data, loading } = useGetLogByDate(date);
   const [_, action, pending] = useActionState(
     (_: unknown, formData: FormData) =>
-      RuntimeClient.runPromise(
-        Dexie.deleteLog(new SaveFormData<FormName>(formData).entriesSchema)
-      ),
+      RuntimeClient.runPromise(Dexie.deleteLog(formData)),
     null
   );
 

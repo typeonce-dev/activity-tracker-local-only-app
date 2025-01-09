@@ -5,7 +5,6 @@ import { useGetActivities } from "../lib/hooks/use-get-activities";
 import { RuntimeClient } from "../lib/runtime-client";
 import { Dexie } from "../lib/services/dexie";
 import { textColor } from "../styles";
-import { SaveFormData } from "../utils";
 import Loading from "./loading";
 import SaveInput from "./ui/save-input";
 
@@ -15,9 +14,7 @@ export default function InsertLog({ date }: { date: string }) {
   const { data, error, loading } = useGetActivities();
   const [, action, pending] = useActionState(
     (_: unknown, formData: FormData) =>
-      RuntimeClient.runPromise(
-        Dexie.insertLog(new SaveFormData<FormName>(formData).entriesSchema)
-      ),
+      RuntimeClient.runPromise(Dexie.insertLog(formData)),
     null
   );
 

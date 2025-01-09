@@ -28,10 +28,10 @@ export class Dexie extends Effect.Service<Dexie>()("Dexie", {
 
     const execute =
       <A, I, T>(schema: Schema.Schema<A, I>, exec: (values: I) => Promise<T>) =>
-      (extending: (_: typeof schema) => I) =>
+      (formData: FormData) =>
         pipe(
-          extending(schema),
-          Schema.decode(schema),
+          // TODO: This fails since all `FormData` entries are strings (or `File`)
+          Schema.decodeUnknown(schema)(formData.entries()),
           Effect.flatMap(Schema.encode(schema)),
           Effect.tap((encoded) => Effect.log("Insert", encoded)),
           Effect.tapError((error) => Effect.log("Error", error)),
