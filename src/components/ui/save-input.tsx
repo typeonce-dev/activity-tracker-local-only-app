@@ -5,7 +5,7 @@ type NativeProps = React.DetailedHTMLProps<
 
 export default function SaveInput<Name extends string = never>(
   props: Omit<NativeProps, "name"> & {
-    name: Name;
+    name: NoInfer<Name>;
   }
 ) {
   return <input {...props} />;
