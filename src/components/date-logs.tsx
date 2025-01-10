@@ -8,7 +8,7 @@ import { textColor } from "../styles";
 import Loading from "./loading";
 import SaveInput from "./ui/save-input";
 
-type FormName = "log-id";
+type FormName = "logId";
 
 export default function DateLogs({ date }: { date: string }) {
   const { error, data, loading } = useGetLogByDate(date);
@@ -45,7 +45,7 @@ export default function DateLogs({ date }: { date: string }) {
               <SaveInput<FormName>
                 type="hidden"
                 value={log.logId}
-                name="log-id"
+                name="logId"
               />
               <Button
                 type="submit"

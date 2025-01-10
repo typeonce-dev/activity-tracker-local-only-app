@@ -9,7 +9,7 @@ import { Button } from "./ui/button";
 import { RadioGroup } from "./ui/radio-group";
 import { FieldError, Input, Label, TextField } from "./ui/text-field";
 
-type FormName = "name" | "category-id";
+type FormName = "name" | "categoryId";
 
 export default function InsertActivity() {
   const { data, error, loading } = useGetCategories();
@@ -33,7 +33,7 @@ export default function InsertActivity() {
         <FieldError />
       </TextField>
 
-      <RadioGroup<FormName> className="flex flex-wrap gap-2" name="category-id">
+      <RadioGroup<FormName> className="flex flex-wrap gap-2" name="categoryId">
         <Label hidden>Category</Label>
         {data.map((category) => (
           <Radio

@@ -8,7 +8,7 @@ import { textColor } from "../styles";
 import Loading from "./loading";
 import SaveInput from "./ui/save-input";
 
-type FormName = "activity-id" | "date";
+type FormName = "activityId" | "date";
 
 export default function InsertLog({ date }: { date: string }) {
   const { data, error, loading } = useGetActivities();
@@ -42,7 +42,7 @@ export default function InsertLog({ date }: { date: string }) {
             <SaveInput<FormName>
               type="hidden"
               value={activity.activityId}
-              name="activity-id"
+              name="activityId"
             />
             <SaveInput<FormName> type="hidden" value={date} name="date" />
             <Button

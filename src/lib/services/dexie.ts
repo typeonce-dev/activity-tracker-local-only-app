@@ -11,6 +11,16 @@ class WriteApiError extends Data.TaggedError("WriteApiError")<{
   cause: unknown;
 }> {}
 
+const formDataToRecord = (formData: FormData): Record<string, string> => {
+  const record: Record<string, string> = {};
+  for (const [key, value] of formData.entries()) {
+    if (typeof value === "string") {
+      record[key] = value;
+    }
+  }
+  return record;
+};
+
 export class Dexie extends Effect.Service<Dexie>()("Dexie", {
   accessors: true,
   effect: Effect.gen(function* () {
@@ -27,14 +37,20 @@ export class Dexie extends Effect.Service<Dexie>()("Dexie", {
     });
 
     const execute =
-      <A, I, T>(schema: Schema.Schema<A, I>, exec: (values: I) => Promise<T>) =>
+      <F extends Record<string, string>, I, A, T>(
+        source: Schema.Schema<I, F>,
+        schema: Schema.Schema<A, I>,
+        exec: (values: I) => Promise<T>
+      ) =>
       (formData: FormData) =>
         pipe(
-          // TODO: This fails since all `FormData` entries are strings (or `File`)
-          Schema.decodeUnknown(schema)(formData.entries()),
+          Schema.decodeUnknown(source)(formDataToRecord(formData)),
+          Effect.flatMap(Schema.decode(schema)),
           Effect.flatMap(Schema.encode(schema)),
           Effect.tap((encoded) => Effect.log("Insert", encoded)),
-          Effect.tapError((error) => Effect.log("Error", error)),
+          Effect.tapError((error) =>
+            Effect.log("Error", error, formDataToRecord(formData))
+          ),
           Effect.mapError((error) => new WriteApiError({ cause: error })),
           Effect.flatMap((values) =>
             Effect.tryPromise({
@@ -49,10 +65,15 @@ export class Dexie extends Effect.Service<Dexie>()("Dexie", {
 
       insertCategory: execute(
         Schema.Struct({ name: Schema.NonEmptyString, color: Color }),
+        Schema.Struct({ name: Schema.NonEmptyString, color: Color }),
         ({ name, color }) => db.category.add({ name, color })
       ),
 
       insertActivity: execute(
+        Schema.Struct({
+          name: Schema.NonEmptyString,
+          categoryId: Schema.NumberFromString,
+        }),
         Schema.Struct({
           name: Schema.NonEmptyString,
           categoryId: Schema.Number,
@@ -62,13 +83,19 @@ export class Dexie extends Effect.Service<Dexie>()("Dexie", {
       ),
 
       insertLog: execute(
+        Schema.Struct({
+          date: Schema.String,
+          activityId: Schema.NumberFromString,
+        }),
         Schema.Struct({ date: Schema.String, activityId: Schema.Number }),
         ({ date, activityId }) =>
           db.log.add({ date, activityIdRef: activityId, note: null })
       ),
 
-      deleteLog: execute(Schema.Struct({ logId: Schema.Number }), ({ logId }) =>
-        db.log.where("logId").equals(logId).delete()
+      deleteLog: execute(
+        Schema.Struct({ logId: Schema.NumberFromString }),
+        Schema.Struct({ logId: Schema.Number }),
+        ({ logId }) => db.log.where("logId").equals(logId).delete()
       ),
     };
   }),
