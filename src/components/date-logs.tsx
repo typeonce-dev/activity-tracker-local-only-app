@@ -1,3 +1,4 @@
+import { Effect } from "effect";
 import { XIcon } from "lucide-react";
 import { useActionState } from "react";
 import { Button } from "react-aria-components";
@@ -14,7 +15,12 @@ export default function DateLogs({ date }: { date: string }) {
   const { error, data, loading } = useGetLogByDate(date);
   const [_, action, pending] = useActionState(
     (_: unknown, formData: FormData) =>
-      RuntimeClient.runPromise(Dexie.deleteLog(formData)),
+      RuntimeClient.runPromise(
+        Effect.gen(function* () {
+          const api = yield* Dexie;
+          return yield* api.deleteLog<FormName>(formData);
+        })
+      ),
     null
   );
 

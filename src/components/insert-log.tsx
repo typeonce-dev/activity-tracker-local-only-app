@@ -1,3 +1,4 @@
+import { Effect } from "effect";
 import { PlusIcon } from "lucide-react";
 import { useActionState } from "react";
 import { Button } from "react-aria-components";
@@ -14,7 +15,12 @@ export default function InsertLog({ date }: { date: string }) {
   const { data, error, loading } = useGetActivities();
   const [, action, pending] = useActionState(
     (_: unknown, formData: FormData) =>
-      RuntimeClient.runPromise(Dexie.insertLog(formData)),
+      RuntimeClient.runPromise(
+        Effect.gen(function* () {
+          const api = yield* Dexie;
+          return yield* api.insertLog<FormName>(formData);
+        })
+      ),
     null
   );
 

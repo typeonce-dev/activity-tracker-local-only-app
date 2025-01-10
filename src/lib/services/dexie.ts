@@ -22,7 +22,6 @@ const formDataToRecord = (formData: FormData): Record<string, string> => {
 };
 
 export class Dexie extends Effect.Service<Dexie>()("Dexie", {
-  accessors: true,
   effect: Effect.gen(function* () {
     const db = new _Dexie.Dexie("_db") as _Dexie.Dexie & {
       category: _Dexie.EntityTable<typeof CategoryTable.Encoded, "categoryId">;
@@ -42,7 +41,7 @@ export class Dexie extends Effect.Service<Dexie>()("Dexie", {
         schema: Schema.Schema<A, I>,
         exec: (values: I) => Promise<T>
       ) =>
-      (formData: FormData) =>
+      <_ extends keyof F>(formData: FormData) =>
         pipe(
           Schema.decodeUnknown(source)(formDataToRecord(formData)),
           Effect.flatMap(Schema.decode(schema)),

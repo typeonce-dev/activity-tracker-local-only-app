@@ -1,3 +1,4 @@
+import { Effect } from "effect";
 import { useActionState } from "react";
 import { Button } from "../components/ui/button";
 import { Radio, RadioGroup } from "../components/ui/radio-group";
@@ -15,7 +16,12 @@ type FormName = "name" | "color";
 export default function InsertCategory() {
   const [, action, pending] = useActionState(
     (_: unknown, formData: FormData) =>
-      RuntimeClient.runPromise(Dexie.insertCategory(formData)),
+      RuntimeClient.runPromise(
+        Effect.gen(function* () {
+          const api = yield* Dexie;
+          return yield* api.insertCategory<FormName>(formData);
+        })
+      ),
     null
   );
   return (

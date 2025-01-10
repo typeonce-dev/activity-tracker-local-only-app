@@ -1,3 +1,4 @@
+import { Effect } from "effect";
 import { useActionState } from "react";
 import { Radio } from "react-aria-components";
 import { useGetCategories } from "../lib/hooks/use-get-categories";
@@ -15,7 +16,12 @@ export default function InsertActivity() {
   const { data, error, loading } = useGetCategories();
   const [, action, pending] = useActionState(
     (_: unknown, formData: FormData) =>
-      RuntimeClient.runPromise(Dexie.insertActivity(formData)),
+      RuntimeClient.runPromise(
+        Effect.gen(function* () {
+          const api = yield* Dexie;
+          return yield* api.insertActivity<FormName>(formData);
+        })
+      ),
     null
   );
 
