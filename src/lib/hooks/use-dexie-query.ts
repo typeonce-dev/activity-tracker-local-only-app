@@ -30,10 +30,7 @@ export const useQuery = <A, I>(
       RuntimeClient.runPromise(
         Effect.gen(function* () {
           const { db } = yield* Dexie;
-          return yield* Effect.tryPromise({
-            try: () => query(db),
-            catch: (error) => new DatabaseError({ cause: error }),
-          });
+          return yield* Effect.promise(() => query(db));
         })
       ),
     deps
