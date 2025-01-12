@@ -22,7 +22,7 @@ const radio = cva(
 const RadioGroup = <Name extends string = never>({
   ...props
 }: Omit<Aria.RadioGroupProps, "name"> & {
-  name: Name;
+  name: NoInfer<Name>;
 }) => {
   return <Aria.RadioGroup {...props} />;
 };

@@ -4,7 +4,7 @@ import { cn } from "../../utils";
 const TextField = <Name extends string = never>({
   ...props
 }: Omit<Aria.TextFieldProps, "name"> & {
-  name: Name;
+  name: NoInfer<Name>;
 }) => {
   return <Aria.TextField {...props} />;
 };
