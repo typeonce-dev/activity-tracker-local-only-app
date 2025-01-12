@@ -11,9 +11,22 @@ export const Color = Schema.Literal(
   "salt"
 );
 
+const IdPrimaryKey = Schema.Number.annotations({
+  message: () => "Id must be a number",
+})
+  .pipe(
+    Schema.nonNegative({
+      message: () => "Id must be a positive number",
+    })
+  )
+  .annotations({
+    identifier: "IdPrimaryKey",
+    title: "id",
+  });
+
 export class CategoryTable extends Schema.Class<CategoryTable>("CategoryTable")(
   {
-    categoryId: Schema.Number,
+    categoryId: IdPrimaryKey,
     name: Schema.String,
     color: Color,
   }
@@ -21,23 +34,22 @@ export class CategoryTable extends Schema.Class<CategoryTable>("CategoryTable")(
 
 export class ActivityTable extends Schema.Class<ActivityTable>("ActivityTable")(
   {
-    activityId: Schema.Number,
+    activityId: IdPrimaryKey,
     name: Schema.String,
-    categoryIdRef: Schema.Number,
+    categoryIdRef: IdPrimaryKey,
   }
 ) {}
 
 export class LogTable extends Schema.Class<LogTable>("LogTable")({
-  logId: Schema.Number,
+  logId: IdPrimaryKey,
   date: Schema.DateFromString,
-  note: Schema.NullOr(Schema.String),
-  activityIdRef: Schema.Number,
+  activityIdRef: IdPrimaryKey,
 }) {}
 
 export class CategorySelect extends Schema.Class<CategorySelect>(
   "CategorySelect"
 )({
-  categoryId: Schema.Number,
+  categoryId: IdPrimaryKey,
   name: Schema.String,
   color: Color,
 }) {}
@@ -45,7 +57,7 @@ export class CategorySelect extends Schema.Class<CategorySelect>(
 export class ActivitySelect extends Schema.Class<ActivitySelect>(
   "ActivitySelect"
 )({
-  activityId: Schema.Number,
+  activityId: IdPrimaryKey,
   name: Schema.String,
   categoryName: Schema.String,
   color: Color,
@@ -54,9 +66,8 @@ export class ActivitySelect extends Schema.Class<ActivitySelect>(
 export class LogByDateSelect extends Schema.Class<LogByDateSelect>(
   "LogByDateSelect"
 )({
-  logId: Schema.Number,
+  logId: IdPrimaryKey,
   date: Schema.DateFromString,
-  note: Schema.NullOr(Schema.String),
   name: Schema.String,
   categoryName: Schema.String,
   color: Color,

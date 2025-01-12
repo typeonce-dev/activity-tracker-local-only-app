@@ -88,7 +88,7 @@ export class Dexie extends Effect.Service<Dexie>()("Dexie", {
         }),
         Schema.Struct({ date: Schema.String, activityId: Schema.Number }),
         ({ date, activityId }) =>
-          db.log.add({ date, activityIdRef: activityId, note: null })
+          db.log.add({ date, activityIdRef: activityId })
       ),
 
       deleteLog: execute(
