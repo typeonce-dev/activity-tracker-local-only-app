@@ -1,4 +1,4 @@
-import { Effect } from "effect";
+import { Effect, Schema } from "effect";
 import { useActionState } from "react";
 import { Radio } from "react-aria-components";
 import { useGetCategories } from "../lib/hooks/use-get-categories";
@@ -19,7 +19,13 @@ export default function InsertActivity() {
       RuntimeClient.runPromise(
         Effect.gen(function* () {
           const api = yield* Dexie;
-          return yield* api.insertActivity<FormName>(formData);
+          const query = api.insertActivity<FormName>(
+            Schema.Struct({
+              name: Schema.NonEmptyString,
+              categoryId: Schema.NumberFromString,
+            })
+          );
+          return yield* query(formData);
         })
       ),
     null

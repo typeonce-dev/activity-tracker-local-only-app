@@ -1,4 +1,4 @@
-import { Effect } from "effect";
+import { Effect, Schema } from "effect";
 import { useActionState } from "react";
 import { Button } from "../components/ui/button";
 import { Radio, RadioGroup } from "../components/ui/radio-group";
@@ -9,7 +9,9 @@ import {
   TextField,
 } from "../components/ui/text-field";
 import { RuntimeClient } from "../lib/runtime-client";
+import { Color } from "../lib/schema";
 import { Dexie } from "../lib/services/dexie";
+import { LiteralFromString } from "../utils";
 
 type FormName = "name" | "color";
 
@@ -19,7 +21,13 @@ export default function InsertCategory() {
       RuntimeClient.runPromise(
         Effect.gen(function* () {
           const api = yield* Dexie;
-          return yield* api.insertCategory<FormName>(formData);
+          const query = api.insertCategory<FormName>(
+            Schema.Struct({
+              name: Schema.NonEmptyString,
+              color: LiteralFromString(Color),
+            })
+          );
+          return yield* query(formData);
         })
       ),
     null

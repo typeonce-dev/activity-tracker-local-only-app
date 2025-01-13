@@ -36,12 +36,11 @@ export class Dexie extends Effect.Service<Dexie>()("Dexie", {
     });
 
     const execute =
-      <F extends Record<string, string>, I, A, T>(
-        source: Schema.Schema<I, F>,
-        schema: Schema.Schema<A, I>,
-        exec: (values: I) => Promise<T>
+      <I, A, T>(schema: Schema.Schema<A, I>, exec: (values: I) => Promise<T>) =>
+      <const R extends string = never>(
+        source: Schema.Schema<I, Record<NoInfer<R>, string>>
       ) =>
-      <_ extends keyof F>(formData: FormData) =>
+      (formData: FormData) =>
         pipe(
           Schema.decodeUnknown(source)(formDataToRecord(formData)),
           Effect.flatMap(Schema.decode(schema)),
@@ -63,16 +62,14 @@ export class Dexie extends Effect.Service<Dexie>()("Dexie", {
       db,
 
       insertCategory: execute(
-        Schema.Struct({ name: Schema.NonEmptyString, color: Color }),
-        Schema.Struct({ name: Schema.NonEmptyString, color: Color }),
+        Schema.Struct({
+          name: Schema.NonEmptyString,
+          color: Color,
+        }),
         ({ name, color }) => db.category.add({ name, color })
       ),
 
       insertActivity: execute(
-        Schema.Struct({
-          name: Schema.NonEmptyString,
-          categoryId: Schema.NumberFromString,
-        }),
         Schema.Struct({
           name: Schema.NonEmptyString,
           categoryId: Schema.Number,
@@ -82,19 +79,13 @@ export class Dexie extends Effect.Service<Dexie>()("Dexie", {
       ),
 
       insertLog: execute(
-        Schema.Struct({
-          date: Schema.String,
-          activityId: Schema.NumberFromString,
-        }),
         Schema.Struct({ date: Schema.String, activityId: Schema.Number }),
         ({ date, activityId }) =>
           db.log.add({ date, activityIdRef: activityId })
       ),
 
-      deleteLog: execute(
-        Schema.Struct({ logId: Schema.NumberFromString }),
-        Schema.Struct({ logId: Schema.Number }),
-        ({ logId }) => db.log.where("logId").equals(logId).delete()
+      deleteLog: execute(Schema.Struct({ logId: Schema.Number }), ({ logId }) =>
+        db.log.where("logId").equals(logId).delete()
       ),
     };
   }),
