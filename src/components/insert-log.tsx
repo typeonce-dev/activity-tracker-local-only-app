@@ -1,9 +1,8 @@
 import { Effect, Schema } from "effect";
 import { PlusIcon } from "lucide-react";
-import { useActionState } from "react";
 import { Button } from "react-aria-components";
+import { useActionEffect } from "../lib/hooks/use-action-effect";
 import { useGetActivities } from "../lib/hooks/use-get-activities";
-import { RuntimeClient } from "../lib/runtime-client";
 import { Dexie } from "../lib/services/dexie";
 import { textColor } from "../styles";
 import Loading from "./loading";
@@ -13,21 +12,17 @@ type FormName = "activityId" | "date";
 
 export default function InsertLog({ date }: { date: string }) {
   const { data, error, loading } = useGetActivities();
-  const [, action, pending] = useActionState(
-    (_: unknown, formData: FormData) =>
-      RuntimeClient.runPromise(
-        Effect.gen(function* () {
-          const api = yield* Dexie;
-          const query = api.insertLog<FormName>(
-            Schema.Struct({
-              date: Schema.String,
-              activityId: Schema.NumberFromString,
-            })
-          );
-          return yield* query(formData);
+  const [, action, pending] = useActionEffect((formData) =>
+    Effect.gen(function* () {
+      const api = yield* Dexie;
+      const query = api.insertLog<FormName>(
+        Schema.Struct({
+          date: Schema.String,
+          activityId: Schema.NumberFromString,
         })
-      ),
-    null
+      );
+      return yield* query(formData);
+    })
   );
 
   if (loading) {

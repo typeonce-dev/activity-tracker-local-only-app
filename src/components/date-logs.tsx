@@ -1,9 +1,8 @@
 import { Effect, Schema } from "effect";
 import { XIcon } from "lucide-react";
-import { useActionState } from "react";
 import { Button } from "react-aria-components";
+import { useActionEffect } from "../lib/hooks/use-action-effect";
 import { useGetLogByDate } from "../lib/hooks/use-get-log-by-date";
-import { RuntimeClient } from "../lib/runtime-client";
 import { Dexie } from "../lib/services/dexie";
 import { textColor } from "../styles";
 import Loading from "./loading";
@@ -13,18 +12,14 @@ type FormName = "logId";
 
 export default function DateLogs({ date }: { date: string }) {
   const { error, data, loading } = useGetLogByDate(date);
-  const [_, action, pending] = useActionState(
-    (_: unknown, formData: FormData) =>
-      RuntimeClient.runPromise(
-        Effect.gen(function* () {
-          const api = yield* Dexie;
-          const query = api.deleteLog<FormName>(
-            Schema.Struct({ logId: Schema.NumberFromString })
-          );
-          return yield* query(formData);
-        })
-      ),
-    null
+  const [_, action, pending] = useActionEffect((formData) =>
+    Effect.gen(function* () {
+      const api = yield* Dexie;
+      const query = api.deleteLog<FormName>(
+        Schema.Struct({ logId: Schema.NumberFromString })
+      );
+      return yield* query(formData);
+    })
   );
 
   if (loading) {

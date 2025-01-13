@@ -1,5 +1,4 @@
 import { Effect, Schema } from "effect";
-import { useActionState } from "react";
 import { Button } from "../components/ui/button";
 import { Radio, RadioGroup } from "../components/ui/radio-group";
 import {
@@ -8,7 +7,7 @@ import {
   Label,
   TextField,
 } from "../components/ui/text-field";
-import { RuntimeClient } from "../lib/runtime-client";
+import { useActionEffect } from "../lib/hooks/use-action-effect";
 import { Color } from "../lib/schema";
 import { Dexie } from "../lib/services/dexie";
 import { LiteralFromString } from "../utils";
@@ -16,21 +15,17 @@ import { LiteralFromString } from "../utils";
 type FormName = "name" | "color";
 
 export default function InsertCategory() {
-  const [, action, pending] = useActionState(
-    (_: unknown, formData: FormData) =>
-      RuntimeClient.runPromise(
-        Effect.gen(function* () {
-          const api = yield* Dexie;
-          const query = api.insertCategory<FormName>(
-            Schema.Struct({
-              name: Schema.NonEmptyString,
-              color: LiteralFromString(Color),
-            })
-          );
-          return yield* query(formData);
+  const [, action, pending] = useActionEffect((formData) =>
+    Effect.gen(function* () {
+      const api = yield* Dexie;
+      const query = api.insertCategory<FormName>(
+        Schema.Struct({
+          name: Schema.NonEmptyString,
+          color: LiteralFromString(Color),
         })
-      ),
-    null
+      );
+      return yield* query(formData);
+    })
   );
   return (
     <form action={action} className="flex flex-col gap-y-4">

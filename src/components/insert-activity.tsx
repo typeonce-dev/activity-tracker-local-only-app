@@ -1,8 +1,7 @@
 import { Effect, Schema } from "effect";
-import { useActionState } from "react";
 import { Radio } from "react-aria-components";
+import { useActionEffect } from "../lib/hooks/use-action-effect";
 import { useGetCategories } from "../lib/hooks/use-get-categories";
-import { RuntimeClient } from "../lib/runtime-client";
 import { Dexie } from "../lib/services/dexie";
 import CategoryDot from "./category-dot";
 import Loading from "./loading";
@@ -14,21 +13,17 @@ type FormName = "name" | "categoryId";
 
 export default function InsertActivity() {
   const { data, error, loading } = useGetCategories();
-  const [, action, pending] = useActionState(
-    (_: unknown, formData: FormData) =>
-      RuntimeClient.runPromise(
-        Effect.gen(function* () {
-          const api = yield* Dexie;
-          const query = api.insertActivity<FormName>(
-            Schema.Struct({
-              name: Schema.NonEmptyString,
-              categoryId: Schema.NumberFromString,
-            })
-          );
-          return yield* query(formData);
+  const [, action, pending] = useActionEffect((formData) =>
+    Effect.gen(function* () {
+      const api = yield* Dexie;
+      const query = api.insertActivity<FormName>(
+        Schema.Struct({
+          name: Schema.NonEmptyString,
+          categoryId: Schema.NumberFromString,
         })
-      ),
-    null
+      );
+      return yield* query(formData);
+    })
   );
 
   if (loading) {
