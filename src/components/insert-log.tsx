@@ -28,7 +28,7 @@ export default function InsertLog({ date }: { date: string }) {
   if (loading) {
     return <Loading />;
   } else if (error) {
-    return <div>{error.message}</div>;
+    return <div>{error.reason}</div>;
   }
 
   return (

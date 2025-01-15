@@ -1,24 +1,13 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import {
-  Data,
-  Effect,
-  Either,
-  flow,
-  Match,
-  pipe,
-  Schema,
-  type ParseResult,
-} from "effect";
+import { Data, Effect, Either, flow, Match, pipe, Schema } from "effect";
 import { RuntimeClient } from "../runtime-client";
 import { Dexie } from "../services/dexie";
 
-class DatabaseError extends Data.TaggedError("DatabaseError")<{
+class DexieError extends Data.TaggedError("DexieError")<{
+  reason: "invalid-data" | "query-error";
   cause: unknown;
 }> {}
 class MissingData extends Data.TaggedError("MissingData")<{}> {}
-class InvalidData extends Data.TaggedError("InvalidData")<{
-  parseError: ParseResult.ParseError;
-}> {}
 
 export const useQuery = <A, I>(
   query: (db: (typeof Dexie.Service)["db"]) => Promise<I[]>,
@@ -30,26 +19,35 @@ export const useQuery = <A, I>(
       RuntimeClient.runPromise(
         Effect.gen(function* () {
           const { db } = yield* Dexie;
-          return yield* Effect.promise(() => query(db));
-        })
+          return yield* Effect.tryPromise({
+            try: () => query(db),
+            catch: (cause) => new DexieError({ reason: "query-error", cause }),
+          });
+        }).pipe(Effect.either)
       ),
     deps
   );
+
   return pipe(
     results,
     Either.fromNullable(() => new MissingData()),
     Either.flatMap(
-      flow(
-        Schema.decodeEither(Schema.Array(schema)),
-        Either.mapLeft((parseError) => new InvalidData({ parseError }))
-      )
+      Either.match({
+        onLeft: Either.left,
+        onRight: flow(
+          Schema.decodeEither(Schema.Array(schema)),
+          Either.mapLeft(
+            (cause) => new DexieError({ reason: "invalid-data", cause })
+          )
+        ),
+      })
     ),
     Either.match({
       onLeft: (_) =>
         Match.value(_).pipe(
           Match.tagsExhaustive({
-            InvalidData: ({ parseError }) => ({
-              error: parseError,
+            DexieError: (error) => ({
+              error,
               loading: false as const,
               data: undefined,
             }),

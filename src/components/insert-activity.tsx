@@ -29,7 +29,7 @@ export default function InsertActivity() {
   if (loading) {
     return <Loading />;
   } else if (error) {
-    return <div>{error.message}</div>;
+    return <div>{error.reason}</div>;
   }
 
   return (

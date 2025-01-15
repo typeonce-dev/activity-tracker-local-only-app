@@ -1,5 +1,5 @@
 import * as _Dexie from "dexie";
-import { Data, Effect, pipe, Schema } from "effect";
+import { Data, Effect, Schema } from "effect";
 import {
   Color,
   type ActivityTable,
@@ -41,8 +41,7 @@ export class Dexie extends Effect.Service<Dexie>()("Dexie", {
         source: Schema.Schema<I, Record<NoInfer<R>, string>>
       ) =>
       (formData: FormData) =>
-        pipe(
-          Schema.decodeUnknown(source)(formDataToRecord(formData)),
+        Schema.decodeUnknown(source)(formDataToRecord(formData)).pipe(
           Effect.flatMap(Schema.decode(schema)),
           Effect.flatMap(Schema.encode(schema)),
           Effect.tap((encoded) => Effect.log("Insert", encoded)),
